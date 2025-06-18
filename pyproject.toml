@@ -1,0 +1,15 @@
+[project]
+name = "nyc-bike-trips"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "behave>=1.2.6",
+    "ipykernel>=6.29.5",
+    "ipython>=9.3.0",
+    "plotnine>=0.14.5",
+    "polars[gpu]>=1.28.1",
+    "quarto>=0.1.0",
+    "sphinx>=8.2.3",
+]

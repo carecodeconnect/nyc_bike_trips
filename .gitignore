@@ -1,0 +1,56 @@
+# Python cache and build files
+__pycache__/
+*.py[oc]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+build/
+dist/
+wheels/
+.eggs/
+*.manifest
+*.spec
+
+# Virtual environments
+.venv/
+env/
+ENV/
+venv/
+
+# Jupyter and Quarto notebook checkpoints
+.ipynb_checkpoints/
+*.ipynb
+
+# Quarto and notebook outputs
+*.html
+*.pdf
+*.docx
+
+# Data files (ignore all, but keep a .gitkeep or README if needed)
+data/
+!data/.gitkeep
+!data/README.md
+
+# Sphinx build
+docs/_build/
+docs/.doctrees/
+docs/.buildinfo
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Lock files (optional, if you want to keep them out of git)
+# uv.lock
+# poetry.lock
+# Pipfile.lock
+
+# Misc
+*.tmp
+*.bak
+*.swp
