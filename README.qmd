@@ -22,7 +22,7 @@ format:
     documentclass: article
     header-includes:
       - \usepackage{graphicx} # for graphics support
-jupyter: nyc_bike_trips
+jupyter: python3
 ---
 
 # Installation
