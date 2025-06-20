@@ -5,9 +5,14 @@
 
 ![NYC Bike Stations](img/nyc_map.png)
 
-- [Collect & Transform](collect_transform.md)
+- [Collect & Transform](01_collect_transform.md)
 
-- [Visualise](visualise.md)
+- [Visualise](02_visualise.md)
+
+This repo is based on code written for the book [Python Polars: The
+Definitive
+Guide](https://github.com/jeroenjanssens/python-polars-the-definitive-guide)
+by Janssens and Nieuwdorp.
 
 # Installation
 
@@ -24,6 +29,19 @@ uv add 'polars[gpu]'
 - `quarto` for scientific publishing
 
 - `sphinx` for documentation
+
+- `rust` for `polars_geo` plugin:
+
+- [Install Rust](https://www.rust-lang.org/tools/install)
+
+- Or update Rust with `rustup update`
+
+- `maturin` for installing `polars_geo` Rust plugin:
+
+- [Install maturin](https://www.maturin.rs/installation.html)
+
+- Build the plugin (see [Collect & Transform](01_collect_transform.md));
+  we had to update the versions of some dependencies to make it work
 
 Testing:
 

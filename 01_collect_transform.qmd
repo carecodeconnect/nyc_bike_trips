@@ -1,0 +1,295 @@
+---
+title: "Collect & Transform Data"
+execute:
+  warning: false
+  echo: true  # Ensure this is set to true if you want to see the code
+  eval: true  # Ensure this is set to true to allow execution
+format:
+  gfm:
+    preview-mode: raw
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+    embed-resources: true
+    toc: true
+    html-math-method: plain
+    theme: cosmo
+  pdf:
+    geometry: landscape
+    echo: false
+    toc: true
+    number-sections: true
+    documentclass: article
+    header-includes:
+      - \usepackage{graphicx} # for graphics support
+jupyter: python3
+---
+
+# Import Modules
+
+```{python}
+from pathlib import Path
+import json
+import polars as pl
+# The command below builds the polars_geo plugin in Rust locally
+# This only needs to be run once
+#! cd polars_geo && uv run maturin develop --release
+import polars_geo
+```
+# Initialise Parameters
+
+```{python}
+#| tags: [parameters]
+data_dir = Path("data")
+trips_url = "https://s3.amazonaws.com/tripdata/202403-citibike-tripdata.csv.zip"
+trips_filename = "202403-citibike-tripdata.csv.zip"
+geojson_url = "https://raw.githubusercontent.com/HodgesWardElliott/custom-nyc-neighborhoods/refs/heads/master/custom-pedia-cities-nyc-Mar2018.geojson"
+geojson_filename = "nyc-neighbourhoods.geojson"
+geojson_path = data_dir / geojson_filename
+csv_trips_filename = trips_filename.replace('.csv.zip', '.csv')
+csv_path = data_dir / csv_trips_filename
+zip_path = data_dir / trips_filename
+```
+
+# Trips
+
+## Download Trips Data
+
+```{python}
+# Download and unzip trips data if CSV does not exist
+if not csv_path.exists():
+    # Download the zip file if not already present
+    if not zip_path.exists():
+        !curl -L -o {zip_path} {trips_url}
+    # Unzip the file
+    !unzip -d {data_dir} {zip_path}
+    # Remove the zip file
+    zip_path.unlink(missing_ok=True)
+```
+
+## View Trips Data
+
+```{python}
+# Get the CSV filename (remove .zip extension)
+csv_trips_filename = trips_filename.replace('.csv.zip', '.csv')
+!wc -l {data_dir}/{csv_trips_filename}
+!head -n 6 {data_dir}/{csv_trips_filename}
+```
+
+## Load Trips Data as Polars DataFrame
+
+```{python}
+trips = pl.read_csv(
+    f"{data_dir}/{csv_trips_filename}", 
+    try_parse_dates=True,
+    schema_overrides={
+        "start_station_id": pl.String,
+        "end_station_id": pl.String
+    },
+).sort(
+    "started_at"
+)
+```
+
+## Inspect Trips Data
+
+```{python}
+print(type(trips))
+print(trips.describe())
+```
+
+```{python}
+print(trips[:, :4])
+print(trips[:, 4:8])
+print(trips[:, 8:])
+```
+
+## Save Trips DataFrame as Parquet File
+
+```{python}
+# Save with same base filename but .parquet extension
+parquet_trips_filename = trips_filename.replace('.zip', '.parquet')
+trips.write_parquet(f'{data_dir}/{parquet_trips_filename}')
+```
+
+# Neighbourhoods
+
+## Download GeoJSON File
+```{python}
+# Download geojson if not already present
+if not geojson_path.exists():
+    !curl -L -o {geojson_path} {geojson_url}
+
+#!python -m json.tool {data_dir}/{geojson_filename}
+```
+
+## Display Sample of GeoJSON
+
+```{python}
+with open(f"{data_dir}/{geojson_filename}") as f:
+    geojson = json.load(f)
+
+# Pretty-print the first feature
+if "features" in geojson and len(geojson["features"]) > 0:
+    print(json.dumps(geojson["features"][0], indent=2))
+```
+
+## Convert GeoJSON to Polars DataFrame
+```{python}
+neighbourhoods = (
+    pl.read_json(f"{data_dir}/{geojson_filename}")
+    .select("features")
+    .explode("features")
+    .unnest("features")
+    .unnest("properties")
+    .select("neighborhood", "borough", "geometry")
+    .unnest("geometry")
+    .with_columns(polygon=pl.col("coordinates").list.first())
+    .select("neighborhood", "borough", "polygon")
+    .filter(pl.col("borough") != "Staten Island")
+    .sort("neighborhood")
+)
+```
+## Inspect Neighbourhoods DataFrame
+```{python}
+neighbourhoods.describe()
+```
+
+## Save Neighbourhoods as Parquet File
+
+```{python}
+# Create the Parquet filename by replacing .geojson with .parquet
+neighbourhoods_parquet_filename = f"{data_dir}/{geojson_filename.replace('.geojson', '.parquet')}"
+
+# Save the DataFrame as a Parquet file
+neighbourhoods.write_parquet(neighbourhoods_parquet_filename)
+```
+
+# Display File Sizes
+
+CSV (547M) vs Parquet (93M)
+
+GeoJSON (1.5M) vs Parquet (357K)
+
+```{python}
+!ls -lh {data_dir}/*.csv {data_dir}/*.geojson {data_dir}/*.parquet
+```
+
+# Transform Trips
+
+```{python}
+trips = trips.select(
+  bike_type = pl.col("rideable_type")
+  .str.split("_")
+  .list.get(0)
+  .cast(pl.Categorical),
+  rider_type = pl.col("member_casual").cast(pl.Categorical),
+  datetime_start = pl.col("started_at"),
+  datetime_end = pl.col("ended_at"),
+  station_start = pl.col("start_station_name"),
+  station_end = pl.col("end_station_name"),
+  lon_start = pl.col("start_lng"),
+  lat_start = pl.col("start_lat"),
+  lon_end = pl.col("end_lng"),
+  lat_end = pl.col("end_lat")
+).with_columns(
+  duration = (pl.col("datetime_end") - pl.col("datetime_start"))
+)
+print(trips)
+trips.write_parquet(data_dir / "trips_transformed.parquet")
+```
+
+# Clean Trips
+
+```{python}
+trips = (
+  trips.drop_nulls()
+  .filter(
+    (pl.col("datetime_start") >= pl.date(2024, 3, 1))
+    & (pl.col("datetime_end") < pl.date(2024, 4, 1)) 
+  )
+  .filter(
+    ~(
+      (pl.col("station_start") == pl.col("station_end"))
+      & (pl.col("duration").dt.total_seconds() < 5 * 60)
+    )
+  )
+)
+print(f"Total number of trips: {trips.height}")
+trips.write_parquet(data_dir / "trips_transformed.parquet")
+```
+
+# Add Trip Distance
+
+```{python}
+trips = trips.with_columns(
+  distance = pl.concat_list("lon_start", "lat_start").geo.haversine_distance(
+    pl.concat_list("lon_end", "lat_end")
+  )
+  / 1000
+)
+print(trips)
+trips.write_parquet(data_dir / "trips_transformed.parquet")
+```
+
+# Add borough and neighbourhood
+
+```{python}
+stations = pl.read_parquet(data_dir / "stations.parquet")
+print(stations)
+
+stations = (
+  stations.with_columns(point = pl.concat_list("lon", "lat"))
+  .join(neighbourhoods, how = "cross")
+  .with_columns(
+    in_neighbourhood = pl.col("point").geo.point_in_polygon(pl.col("polygon"))
+  )
+  .filter(pl.col("in_neighbourhood"))
+  .unique("station")
+  .select(
+    "station",
+    "borough",
+    "neighborhood"
+  )
+)
+print(stations)
+stations.write_parquet(data_dir / "stations_borough_neighborhood.parquet")
+```
+
+# Join Trips with Stations / Borough Neighbourhood
+
+```{python}
+trips = (
+  trips.join(
+    stations.select(pl.all().name.suffix("_start")), on = "station_start"
+  )
+  .join(stations.select(pl.all().name.suffix("_end")), on = "station_end")
+  .select(
+    "bike_type",
+    "rider_type",
+    "datetime_start",
+    "datetime_end",
+    "duration",
+    "station_start",
+    "station_end",
+    "neighborhood_start",
+    "neighborhood_end",
+    "borough_start",
+    "borough_end",
+    "lat_start",
+    "lon_start",
+    "lat_end",
+    "lon_end",
+    "distance"
+  )
+)
+trips.write_parquet(data_dir / "trips_stations_borough_neighbourhood.parquet")
+print(trips)
+```
+
+```{python}
+print(trips[:, :4])
+print(trips[:, 4:7])
+print(trips[:, 7:11])
+print(trips[:, 11:])
+```
