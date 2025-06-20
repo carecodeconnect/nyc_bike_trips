@@ -3,9 +3,11 @@
 
 # Overview
 
+![NYC Bike Stations](img/nyc_map.png)
+
 - [Collect & Transform](collect_transform.md)
 
-- [Visualise](visualise.qmd)
+- [Visualise](visualise.md)
 
 # Installation
 
