@@ -39,13 +39,6 @@ if not csv_path.exists():
     zip_path.unlink(missing_ok=True)
 ```
 
-      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                     Dload  Upload   Total   Spent    Left  Speed
-      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  116M    0  305k    0     0   268k      0  0:07:24  0:00:01  0:07:23  268k  5  116M    5 7025k    0     0  3378k      0  0:00:35  0:00:02  0:00:33 3377k 14  116M   14 17.1M    0     0  5696k      0  0:00:20  0:00:03  0:00:17 5695k 24  116M   24 28.4M    0     0  7138k      0  0:00:16  0:00:04  0:00:12 7137k 34  116M   34 40.0M    0     0  8065k      0  0:00:14  0:00:05  0:00:09 8305k 44  116M   44 51.7M    0     0  8723k      0  0:00:13  0:00:06  0:00:07 10.4M 54  116M   54 63.8M    0     0  9239k      0  0:00:12  0:00:07  0:00:05 11.4M 65  116M   65 76.0M    0     0  9637k      0  0:00:12  0:00:08  0:00:04 11.7M 75  116M   75 88.3M    0     0  9959k      0  0:00:11  0:00:09  0:00:02 11.9M 86  116M   86  100M    0     0   9.9M      0  0:00:11  0:00:10  0:00:01 12.0M 96  116M   96  112M    0     0  10.1M      0  0:00:11  0:00:11 --:--:-- 12.1M100  116M  100  116M    0     0  10.2M      0  0:00:11  0:00:11 --:--:-- 12.2M
-    Archive:  data/202403-citibike-tripdata.csv.zip
-      inflating: data/202403-citibike-tripdata.csv  
-      inflating: data/__MACOSX/._202403-citibike-tripdata.csv  
-
 ## View Trips Data
 
 ``` python
@@ -198,10 +191,6 @@ if not geojson_path.exists():
 
 #!python -m json.tool {data_dir}/{geojson_filename}
 ```
-
-      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                     Dload  Upload   Total   Spent    Left  Speed
-      0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1462k  100 1462k    0     0  3981k      0 --:--:-- --:--:-- --:--:-- 3984k
 
 ## Display Sample of GeoJSON
 
@@ -368,6 +357,7 @@ GeoJSON (1.5M) vs Parquet (357K)
 ```
 
     -rw-r--r-- 1 solaris solaris 547M Jul 31  2024 data/202403-citibike-tripdata.csv
-    -rw-rw-r-- 1 solaris solaris  93M Jun 18 15:42 data/202403-citibike-tripdata.csv.parquet
+    -rw-rw-r-- 1 solaris solaris  93M Jun 20 15:44 data/202403-citibike-tripdata.csv.parquet
     -rw-rw-r-- 1 solaris solaris 1.5M Jun 18 15:42 data/nyc-neighbourhoods.geojson
-    -rw-rw-r-- 1 solaris solaris 357K Jun 18 15:42 data/nyc-neighbourhoods.parquet
+    -rw-rw-r-- 1 solaris solaris 357K Jun 20 15:44 data/nyc-neighbourhoods.parquet
+    -rw-rw-r-- 1 solaris solaris  44K Jun 20 15:27 data/stations.parquet

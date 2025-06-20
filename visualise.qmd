@@ -1,0 +1,111 @@
+---
+title: "Visualise Data"
+execute:
+  warning: false
+  echo: true  # Ensure this is set to true if you want to see the code
+  eval: true  # Ensure this is set to true to allow execution
+format:
+  gfm:
+    preview-mode: raw
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+    embed-resources: true
+    toc: true
+    html-math-method: plain
+    theme: cosmo
+  pdf:
+    geometry: landscape
+    echo: false
+    toc: true
+    number-sections: true
+    documentclass: article
+    header-includes:
+      - \usepackage{graphicx} # for graphics support
+jupyter: python3
+---
+
+```{python}
+# Load packages
+from pathlib import Path
+import polars as pl
+from plotnine import *
+```
+```{python}
+# Import geospatial data
+data_dir = Path("data")
+neighbourhoods = pl.read_parquet(data_dir / "nyc-neighbourhoods.parquet")
+n_neighbourhoods = neighbourhoods.height
+print(neighbourhoods)
+trips = pl.read_parquet(data_dir / "202403-citibike-tripdata.csv.parquet")
+print(trips)
+```
+
+```{python}
+# Transform DataFramen from polygons in lists to one row per coordinate column
+neighbourhoods_coords = (
+    neighbourhoods.with_row_index("id")
+    .explode("polygon")
+    .with_columns(
+        lon = pl.col("polygon").list.first(),
+        lat = pl.col("polygon").list.last()
+    )
+    .drop("polygon")
+)
+print(neighbourhoods_coords)
+```
+
+```{python}
+# Calculate median coordinate of start location of each bike trip, per station
+stations = (
+    trips.group_by(station = pl.col("start_station_name"))
+    .agg(
+        lon = pl.col("start_lng").median(),
+        lat = pl.col("start_lat").median()
+    )
+    .sort("station")
+    .drop_nulls()
+)
+print(stations)
+```
+
+```{python}
+# Save stations DataFrame
+stations.write_parquet(data_dir / "stations.parquet")
+```
+
+```{python}
+n_stations = stations.height
+print(n_stations)
+```
+```{python}
+nyc_map = (
+    ggplot(neighbourhoods_coords, aes(x = "lon", y = "lat", group = "id"))
+    + geom_polygon(aes(alpha = "neighborhood", fill = "borough"), color = "white")
+    + geom_point(stations, size = 0.1)
+    + scale_x_continuous(expand = (0, 0))
+    + scale_y_continuous(expand = (0, 0, 0, 0.01))
+    + scale_alpha_ordinal(range = (0.3, 1))
+    + scale_fill_brewer(type = "qual", palette = 2)
+    + guides(alpha= False)
+    + labs(
+        title = "New York City neighbourhoods and Citi Bike stations",
+        subtitle = f"{n_stations} stations across {n_neighbourhoods} neighbourhoods",
+        caption = "Source: https://citibikenyc.com/system-data",
+        fill = "Borough"
+    )
+    + theme_void(base_family = "Guardian Sans", base_size = 14)
+    + theme(
+        dpi = 300,
+        figure_size = (14, 18),
+        plot_background = element_rect(fill = "white", color = "white"),
+        plot_caption = element_text(style = "italic"),
+        plot_margin = 0.01,
+        plot_title = element_text(ha = "left")
+    )
+)
+nyc_map.save("img/nyc_map.png", dpi = 300)
+```
+
+![NYC Map](img/nyc_map.png)
+

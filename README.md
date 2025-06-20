@@ -5,6 +5,8 @@
 
 - [Collect & Transform](collect_transform.md)
 
+- [Visualise](visualise.qmd)
+
 # Installation
 
 - `uv`
