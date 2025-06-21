@@ -27,7 +27,7 @@ jupyter: python3
 
 # Overview
 
-This repo illustrates how Python `polars` can be applied in a data science project to tidy, analyse, and visualise trips data using software engineering best practices.
+This work-in-progress repo illustrates how Python `polars` can be applied in a data science project to tidy, analyse, and visualise trips data using software engineering best practices.
 
 The data are bicycle trips taken in New York City using [Citi Bike](https://en.wikipedia.org/wiki/Citi_Bike) bicycles. Citi Bike is a privately owned public bicycle sharing system, using technology from Lyft. Citi Bike opened in 2013. This project analyses data from the month of March 2024. The system data for Citi Bike is available [here](https://citibikenyc.com/system-data).
 
@@ -78,21 +78,21 @@ uv run quarto render 02_visualise.qmd
 
 The following tools are used in this project:
 
-- [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
+- [`uv`](https://docs.astral.sh/uv/getting-started/installation/) for Python, environment, and dependency management.
 
-- [`polars`](https://docs.pola.rs/user-guide/getting-started/)
+- [`polars`](https://docs.pola.rs/user-guide/getting-started/) for tidying, transforming, analysing data. 
 
-- [`plotnine`](https://plotnine.org/guide/install.html)
+- [`plotnine`](https://plotnine.org/guide/install.html) for visualising data.
 
-- [`quarto`](https://quarto.org/docs/get-started/) for scientific publishing
+- [`quarto`](https://quarto.org/docs/get-started/) for scientific publishing.
 
-- [`sphinx`](https://www.sphinx-doc.org/en/master/usage/installation.html) for documentation
+- [`sphinx`](https://www.sphinx-doc.org/en/master/usage/installation.html) for documentation.
 
-- `rust` for `polars_geo` plugin. [Install Rust](https://www.rust-lang.org/tools/install). Or update Rust with `rustup update`.
+- `polars_geo` plugin which requires Rust. [Install Rust](https://www.rust-lang.org/tools/install). Or update Rust with `rustup update`.
 
-- `maturin` for installing [`polars_geo`](https://github.com/jeroenjanssens/python-polars-the-definitive-guide/tree/main/plugins/polars_geo) Rust plugin: [Install maturin](https://www.maturin.rs/installation.html). To build the plugin, see [Collect & Transform](01_collect_transform.md). NB: we had to update the versions of some original dependencies to make it work.
+- `maturin` for installing [`polars_geo`](https://github.com/jeroenjanssens/python-polars-the-definitive-guide/tree/main/plugins/polars_geo) Rust plugin: [Install maturin](https://www.maturin.rs/installation.html). To build the plugin, see [Collect & Transform](01_collect_transform.md). NB: we had to update the versions of some original dependencies in the `polars_geo` plugin to make it work on our Ubuntu system (Ubuntu 25.04 x86_64).
 
-Testing:
+Testing (TODO):
 
 - [`tox`](https://tox.wiki/en/4.27.0/installation.html) for running test suite
 
@@ -102,7 +102,7 @@ Testing:
 
 # To Use Polars with GPU Engine
 
-The `polars_geo` Rust plugin does not seem to be compatible with the GPU acceleration on the testing machine with NVIDIA Quadro RTX 4000 Mobile / Max-Q. So the following is just for illustration purposes:
+The `polars_geo` Rust plugin does not seem to be compatible with the GPU acceleration on the testing machine (NVIDIA Quadro RTX 4000 Mobile / Max-Q). So the following is provided for illustration purposes only:
 
 ## Test
 ```{python}

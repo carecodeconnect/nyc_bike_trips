@@ -3,9 +3,9 @@
 
 # Overview
 
-This repo illustrates how Python `polars` can be applied in a data
-science project to tidy, analyse, and visualise trips data using
-software engineering best practices.
+This work-in-progress repo illustrates how Python `polars` can be
+applied in a data science project to tidy, analyse, and visualise trips
+data using software engineering best practices.
 
 The data are bicycle trips taken in New York City using [Citi
 Bike](https://en.wikipedia.org/wiki/Citi_Bike) bicycles. Citi Bike is a
@@ -71,19 +71,22 @@ uv run quarto render 02_visualise.qmd
 
 The following tools are used in this project:
 
-- [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
+- [`uv`](https://docs.astral.sh/uv/getting-started/installation/) for
+  Python, environment, and dependency management.
 
-- [`polars`](https://docs.pola.rs/user-guide/getting-started/)
+- [`polars`](https://docs.pola.rs/user-guide/getting-started/) for
+  tidying, transforming, analysing data.
 
-- [`plotnine`](https://plotnine.org/guide/install.html)
+- [`plotnine`](https://plotnine.org/guide/install.html) for visualising
+  data.
 
 - [`quarto`](https://quarto.org/docs/get-started/) for scientific
-  publishing
+  publishing.
 
 - [`sphinx`](https://www.sphinx-doc.org/en/master/usage/installation.html)
-  for documentation
+  for documentation.
 
-- `rust` for `polars_geo` plugin. [Install
+- `polars_geo` plugin which requires Rust. [Install
   Rust](https://www.rust-lang.org/tools/install). Or update Rust with
   `rustup update`.
 
@@ -92,9 +95,11 @@ The following tools are used in this project:
   Rust plugin: [Install
   maturin](https://www.maturin.rs/installation.html). To build the
   plugin, see [Collect & Transform](01_collect_transform.md). NB: we had
-  to update the versions of some original dependencies to make it work.
+  to update the versions of some original dependencies in the
+  `polars_geo` plugin to make it work on our Ubuntu system (Ubuntu 25.04
+  x86_64).
 
-Testing:
+Testing (TODO):
 
 - [`tox`](https://tox.wiki/en/4.27.0/installation.html) for running test
   suite
@@ -108,8 +113,8 @@ Testing:
 # To Use Polars with GPU Engine
 
 The `polars_geo` Rust plugin does not seem to be compatible with the GPU
-acceleration on the testing machine with NVIDIA Quadro RTX 4000 Mobile /
-Max-Q. So the following is just for illustration purposes:
+acceleration on the testing machine (NVIDIA Quadro RTX 4000 Mobile /
+Max-Q). So the following is provided for illustration purposes only:
 
 ## Test
 
