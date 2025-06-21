@@ -14,44 +14,74 @@ Definitive
 Guide](https://github.com/jeroenjanssens/python-polars-the-definitive-guide)
 by Janssens and Nieuwdorp.
 
-# Installation
+# Quick Start
 
-- `uv`
-
-- `polars`
+In your projects directory:
 
 ``` {bash}
-uv add 'polars[gpu]'
+git clone git@github.com:carecodeconnect/nyc_bike_trips.git
+cd nyc_bike_trips
+uv sync
 ```
 
-- `plotnine`
+To run the Python script:
 
-- `quarto` for scientific publishing
+``` {bash}
+uv run main.py
+uv run main_refactored.py
+```
 
-- `sphinx` for documentation
+To render the Quarto documents to GfM, HTML, PDF:
 
-- `rust` for `polars_geo` plugin:
+``` {bash}
+uv run quarto render README.qmd
+uv run quarto render 01_collect_transform.qmd
+uv run quarto render 02_visualise.qmd
+```
 
-- [Install Rust](https://www.rust-lang.org/tools/install)
+# Project Dependencies
 
-- Or update Rust with `rustup update`
+The following tools are used in this project:
 
-- `maturin` for installing `polars_geo` Rust plugin:
+- [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
 
-- [Install maturin](https://www.maturin.rs/installation.html)
+- [`polars`](https://docs.pola.rs/user-guide/getting-started/)
 
-- Build the plugin (see [Collect & Transform](01_collect_transform.md));
-  we had to update the versions of some dependencies to make it work
+- [`plotnine`](https://plotnine.org/guide/install.html)
+
+- [`quarto`](https://quarto.org/docs/get-started/) for scientific
+  publishing
+
+- [`sphinx`](https://www.sphinx-doc.org/en/master/usage/installation.html)
+  for documentation
+
+- `rust` for `polars_geo` plugin. [Install
+  Rust](https://www.rust-lang.org/tools/install). Or update Rust with
+  `rustup update`.
+
+- `maturin` for installing
+  [`polars_geo`](https://github.com/jeroenjanssens/python-polars-the-definitive-guide/tree/main/plugins/polars_geo)
+  Rust plugin: [Install
+  maturin](https://www.maturin.rs/installation.html). To build the
+  plugin, see [Collect & Transform](01_collect_transform.md). NB: we had
+  to update the versions of some original dependencies to make it work.
 
 Testing:
 
-- `tox` for running test suite
+- [`tox`](https://tox.wiki/en/4.27.0/installation.html) for running test
+  suite
 
-- `behave` for User Acceptance Testing (UAT)
+- [`behave`](https://behave.readthedocs.io/en/latest/install/) for User
+  Acceptance Testing (UAT)
 
-- `pytest` for unit testing
+- [`pytest`](https://docs.pytest.org/en/stable/getting-started.html) for
+  unit testing
 
 # To Use Polars with GPU Engine
+
+The `polars_geo` Rust plugin does not seem to be compatible with the GPU
+acceleration on the testing machine with NVIDIA Quadro RTX 4000 Mobile /
+Max-Q. So the following is just for illustration purposes:
 
 ## Test
 
@@ -82,7 +112,7 @@ pl.LazyFrame({"x": [1, 2, 3]}).collect(engine=pl.GPUEngine(raise_on_fail=True))
 
 </div>
 
-## Execute
+## Execution
 
 ``` python
 #lf.collect(engine='GPU')
