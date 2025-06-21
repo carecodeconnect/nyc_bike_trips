@@ -3,18 +3,42 @@
 
 # Overview
 
+This repo illustrates how Python `polars` can be applied in a data
+science project to tidy, analyse, and visualise trips data using
+software engineering best practices.
+
+The data are bicycle trips taken in New York City using [Citi
+Bike](https://en.wikipedia.org/wiki/Citi_Bike) bicycles. Citi Bike is a
+privately owned public bicycle sharing system, using technology from
+Lyft. Citi Bike opened in 2013. This project analyses data from the
+month of March 2024. The system data for Citi Bike is available
+[here](https://citibikenyc.com/system-data).
+
+The analysis develops code written for the excellent book [Python
+Polars: The Definitive
+Guide](https://github.com/jeroenjanssens/python-polars-the-definitive-guide)
+by Janssens and Nieuwdorp.
+
 ![NYC Bike Stations](img/nyc_map.png)
+
+Click here to view the analysis completed so far:
 
 - [Collect & Transform](01_collect_transform.md)
 
 - [Visualise](02_visualise.md)
 
-This repo is based on code written for the book [Python Polars: The
-Definitive
-Guide](https://github.com/jeroenjanssens/python-polars-the-definitive-guide)
-by Janssens and Nieuwdorp.
+TODO:
+
+- Add testing
+
+- Add API documentation
+
+- Add statistical modeling and Machine Learning
 
 # Quick Start
+
+- Install
+  [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
 
 In your projects directory:
 
@@ -24,14 +48,14 @@ cd nyc_bike_trips
 uv sync
 ```
 
-To run the Python script:
+Run the Python script:
 
 ``` {bash}
 uv run main.py
 uv run main_refactored.py
 ```
 
-To render the Quarto documents to GfM, HTML, PDF:
+And/or render the Quarto documents to GfM, HTML, PDF:
 
 ``` {bash}
 uv run quarto render README.qmd
