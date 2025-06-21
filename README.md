@@ -14,10 +14,14 @@ Lyft. Citi Bike opened in 2013. This project analyses data from the
 month of March 2024. The system data for Citi Bike is available
 [here](https://citibikenyc.com/system-data).
 
-The analysis develops code written for the excellent book [Python
-Polars: The Definitive
+The analysis develops code written for [Python Polars: The Definitive
 Guide](https://github.com/jeroenjanssens/python-polars-the-definitive-guide)
-by Janssens and Nieuwdorp.
+by Janssens and Nieuwdorp. The repo applies software engineering
+principles to data science based on [Python Real-World
+Projects](https://www.oreilly.com/library/view/python-real-world-projects/9781803246765/)
+by Stephen Lott and [Software Engineering for Data
+Scientists](https://www.oreilly.com/library/view/software-engineering-for/9781098136192/)
+by Catherine Nelson.
 
 ![NYC Bike Stations](img/nyc_map.png)
 
